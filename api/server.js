@@ -22,7 +22,7 @@ const provider = new anchor.AnchorProvider(connection, new anchor.Wallet(Keypair
 const program = new anchor.Program(idl, programId, provider);
 
 // Routes
-app.get('/api/rooms', (req, res) => {
+app.get('/api/hey', (req, res) => {
     res.json({ success: true, rooms: [] });
 });
 
