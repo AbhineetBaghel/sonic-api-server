@@ -1,10 +1,9 @@
 const express = require('express');
 const { Connection, PublicKey, Keypair } = require('@solana/web3.js');
 const anchor = require('@project-serum/anchor');
-const app = express();
-const port = 3000;
 const fs = require('fs');
 
+const app = express();
 app.use(express.json());
 
 // Replace with Sonic chain RPC endpoint
@@ -22,23 +21,12 @@ const provider = new anchor.AnchorProvider(connection, new anchor.Wallet(Keypair
 // Create a program instance
 const program = new anchor.Program(idl, programId, provider);
 
-
-
-
-
-
-app.get('/rooms', (req, res) => {
+// Routes
+app.get('/api/rooms', (req, res) => {
     res.json({ success: true, rooms: [] });
-  });
+});
 
-
-
-
-
-
-
-
-app.post('/initialize', async (req, res) => {
+app.post('/api/initialize', async (req, res) => {
   try {
     const [globalState, bump] = await PublicKey.findProgramAddress(
       [Buffer.from('global-state')],
@@ -60,7 +48,7 @@ app.post('/initialize', async (req, res) => {
   }
 });
 
-app.post('/create-room', async (req, res) => {
+app.post('/api/create-room', async (req, res) => {
   try {
     const { creatorPublicKey } = req.body;
 
@@ -93,7 +81,7 @@ app.post('/create-room', async (req, res) => {
   }
 });
 
-app.post('/join-room', async (req, res) => {
+app.post('/api/join-room', async (req, res) => {
   try {
     const { playerPublicKey, roomId } = req.body;
 
@@ -117,7 +105,7 @@ app.post('/join-room', async (req, res) => {
   }
 });
 
-app.post('/end-game', async (req, res) => {
+app.post('/api/end-game', async (req, res) => {
   try {
     const { roomId, winnerPublicKey } = req.body;
 
@@ -141,7 +129,7 @@ app.post('/end-game', async (req, res) => {
   }
 });
 
-app.get('/room/:roomId', async (req, res) => {
+app.get('/api/room/:roomId', async (req, res) => {
   try {
     const { roomId } = req.params;
 
@@ -169,6 +157,5 @@ app.get('/room/:roomId', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+// No need to listen to a port, just export the app
+module.exports = app;
