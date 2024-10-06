@@ -1,13 +1,14 @@
 const express = require('express');
 const { Connection, PublicKey, Keypair } = require('@solana/web3.js');
 const anchor = require('@project-serum/anchor');
-const fs = require('fs');
-
 const app = express();
+const fs = require('fs');
+const port = 3000;
+
 app.use(express.json());
 
 // Replace with Sonic chain RPC endpoint
-const connection = new Connection('https://devnet.sonic.game');
+const connection = new Connection('https://sonic-rpc-endpoint.example.com');
 
 // Load the IDL (Interface Description Language) for your program
 const idl = JSON.parse(fs.readFileSync('./idl.json', 'utf8'));
@@ -21,12 +22,7 @@ const provider = new anchor.AnchorProvider(connection, new anchor.Wallet(Keypair
 // Create a program instance
 const program = new anchor.Program(idl, programId, provider);
 
-// Routes
-app.get('/api/hey', (req, res) => {
-    res.json({ success: true, rooms: [] });
-});
-
-app.post('/api/initialize', async (req, res) => {
+app.post('/initialize', async (req, res) => {
   try {
     const [globalState, bump] = await PublicKey.findProgramAddress(
       [Buffer.from('global-state')],
@@ -48,7 +44,7 @@ app.post('/api/initialize', async (req, res) => {
   }
 });
 
-app.post('/api/create-room', async (req, res) => {
+app.post('/create-room', async (req, res) => {
   try {
     const { creatorPublicKey } = req.body;
 
@@ -81,7 +77,7 @@ app.post('/api/create-room', async (req, res) => {
   }
 });
 
-app.post('/api/join-room', async (req, res) => {
+app.post('/join-room', async (req, res) => {
   try {
     const { playerPublicKey, roomId } = req.body;
 
@@ -105,7 +101,7 @@ app.post('/api/join-room', async (req, res) => {
   }
 });
 
-app.post('/api/end-game', async (req, res) => {
+app.post('/end-game', async (req, res) => {
   try {
     const { roomId, winnerPublicKey } = req.body;
 
@@ -129,7 +125,7 @@ app.post('/api/end-game', async (req, res) => {
   }
 });
 
-app.get('/api/room/:roomId', async (req, res) => {
+app.get('/room/:roomId', async (req, res) => {
   try {
     const { roomId } = req.params;
 
@@ -157,5 +153,6 @@ app.get('/api/room/:roomId', async (req, res) => {
   }
 });
 
-// No need to listen to a port, just export the app
-module.exports = app;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
