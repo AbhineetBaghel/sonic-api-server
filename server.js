@@ -7,8 +7,12 @@ const port = 3000;
 
 app.use(express.json());
 
+app.get('/test', (req, res) => {
+  res.json({ message: 'Server is working!' });
+});
+
 // Replace with Sonic chain RPC endpoint
-const connection = new Connection('https://sonic-rpc-endpoint.example.com');
+const connection = new Connection('https://devnet.sonic.game');
 
 // Load the IDL (Interface Description Language) for your program
 const idl = JSON.parse(fs.readFileSync('./idl.json', 'utf8'));
@@ -21,6 +25,16 @@ const provider = new anchor.AnchorProvider(connection, new anchor.Wallet(Keypair
 
 // Create a program instance
 const program = new anchor.Program(idl, programId, provider);
+
+
+
+
+app.get('/hey', (req, res) => {
+  res.json({ success: true, rooms: [] });
+});
+
+
+
 
 app.post('/initialize', async (req, res) => {
   try {
